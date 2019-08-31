@@ -92,22 +92,35 @@ void tank()
 
 }
 
-
+/**
+* This function is called when an intake should occur. It sets the power to the prespecified value
+*/
 void processIntake()
 {
 	intakePower = intakeDefinedPower;
 }
 
+/**
+* This function is called when an outtake should occur. It sets the power to the prespecified value
+*/
 void processOuttake()
 {
 	intakePower = outtakeDefinedPower;
 }
 
+/**
+* This function is called when the intake should stop or continue to stay stopped.
+* It sets the power to 0
+*/
 void zeroIntakeMotors()
 {
 	intakePower = 0;
 }
 
+/**
+* Determines whether the intake should intake, outtake, or stop based on joystick values.
+* Priority is given to Intake
+*/
 void processIntakeOuttake()
 {
 	if(intakePressed){
@@ -125,20 +138,35 @@ void processIntakeOuttake()
 
 
 
-
+/**
+* This function is called when the arm should move up. It sets the power to the prespecified value
+*/
 void processArmUp()
 {
 	armPower = armUpPower;
 }
+
+/**
+* This function is called when the arm should move down. It sets the power to the prespecified value
+*/
 void processArmDown()
 {
 	armPower = armDownPower;
 }
+
+/**
+* This function is called when the intake should stop or continue to stay stopped.
+* It sets the power to 0
+*/
 void zeroArmMotors()
 {
 	armPower = 0;
 }
 
+/**
+* Determines whether the arm should move up, down, or stop based on joystick values.
+* Priority is given to up
+*/
 void processArm()
 {
 	if(armUpPressed){
@@ -152,7 +180,11 @@ void processArm()
 	}
 }
 
-
+/**
+* Sets the motors to the determined value. This helps with
+* debugging and alleviates motor conflict.
+* Learn more at https://renegaderobotics.org/set-motor-power-just-once/
+*/
 void setMotorPowers()
 {
 	motor[LeftDrive] = dtLeftPower;
@@ -183,11 +215,21 @@ bool runLoop()
 
 }
 
-
+/**
+* This function processes a graceful death. A graceful death ensures
+* that the robot is in a safe location without errors or overflow
+* should the robot be intended to shut down.
+*/
 void die()
 {
-	//Code for a graceful death happens here
+	// In its current form, all motors are set to zero.
+	dtLeftPower = 0;
+	dtRightPower = 0;
+	armPower = 0;
+	intakePower = 0;
+	setMotorPowers();
 }
+
 /**
 * This code will be run by the Cortex on enable.
 * It runs the loop every time, waiting for a graceful shutdown
