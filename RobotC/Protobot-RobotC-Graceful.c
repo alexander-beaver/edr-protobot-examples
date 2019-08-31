@@ -45,8 +45,11 @@ word armDownPressed;
 word intakePressed;
 word outtakePressed;
 
+bool stayAlive = true;
 
-void getJoystickValues(){
+
+void getJoystickValues()
+{
 	leftVericalValue = vexRT[Ch3];
 	leftHorizontalValue = vexRT[Ch4];
 	rightVericalValue = vexRT[Ch2];
@@ -97,7 +100,8 @@ void processOuttake()
 	intakePower = outtakeDefinedPower;
 }
 
-void zeroIntakeMotors(){
+void zeroIntakeMotors()
+{
 	intakePower = 0;
 }
 
@@ -163,7 +167,7 @@ void setMotorPowers()
 *
 * @return whether the loop should run again
 */
-bool loop()
+bool runLoop()
 {
 	getJoystickValues();
 	arcade();
@@ -171,10 +175,15 @@ bool loop()
 	processIntakeOuttake();
 	processArm();
 	setMotorPowers();
-	return true;
+	return stayAlive;
 
 }
 
+
+void die()
+{
+	//Code for a graceful death happens here
+}
 /**
 * This code will be run by the Cortex on enable.
 * It runs the loop every time, waiting for a graceful shutdown
@@ -183,7 +192,8 @@ task main()
 {
 	bool run = true;
 	while(run){
-		run = loop();
+		run = runLoop();
 	}
+	die();
 
 }
