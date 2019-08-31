@@ -39,18 +39,27 @@ signed char leftHorizontalValue = 0; // CH4
 signed char rightVericalValue = 0; // Ch2
 signed char rightHorizontalValue = 0; // Ch 1
 
+// Represent the states of joystick buttons. The values returned by the function is `word` not `bool`,
+// but they can be compared like a boolean
 word armUpPressed;
 word armDownPressed;
 
 word intakePressed;
 word outtakePressed;
 
-
+// Determines if the robot should stay alive or die. FALSE = dies gracefully
 bool stayAlive = true;
 
+/**
+* Sets the sensor value env variables to the current values
+*/
 void getSensorValues(){
-	// Here you would get any sensors that are on the robot
+	// Since we don't have any sensors currently, this doesn't matter.
 }
+
+/**
+* Sets the joystick value env variables to the current values
+*/
 void getJoystickValues()
 {
 	leftVericalValue = vexRT[Ch3];
