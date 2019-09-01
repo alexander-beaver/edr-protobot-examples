@@ -9,46 +9,152 @@
 * This code is an idealistic one that prioritizes convention and failsafes over efficency.
 * If you are an advanced user, this would probably be the better one to follow.
 * Beginners should look at the EasyC or Protobot-RobotC-Basic.c
-*
 */
 
 
 /**
 * Since RobotC does not have built in documentation genertation, comments
-* will be formatted in JavaDOC.
+* will be formatted in JavaDOC, as that is the convention used by Team 100 in production robot code.
 */
 
 /////////////////////////////////////////
 //              VARIABLES              //
 /////////////////////////////////////////
 
+// These variables are what motor powers are assigned to.
 signed char dtLeftPower = 0;
 signed char dtRightPower = 0;
 signed char intakePower = 0;
 signed char armPower = 0;
 
+// These variables are used to specify the power that intake and outtake occurs at.
+signed char intakeDefinedPower = 60;
+signed char outtakeDefinedPower = -60;
+
+signed char armUpPower = 60;
+signed char armDownPower = -60;
+
+signed char leftVericalValue = 0; // CH3
+signed char leftHorizontalValue = 0; // CH4
+signed char rightVericalValue = 0; // Ch2
+signed char rightHorizontalValue = 0; // Ch 1
+
+word armUpPressed;
+word armDownPressed;
+
+word intakePressed;
+word outtakePressed;
+
+
+void getJoystickValues(){
+	leftVericalValue = vexRT[Ch3];
+	leftHorizontalValue = vexRT[Ch4];
+	rightVericalValue = vexRT[Ch2];
+	rightHorizontalValue = vexRT[Ch1];
+
+	armUpPressed = vexRT[Btn6U];
+	armDownPressed = vexRT[Btn6D];
+
+	intakePressed = vexRT[Btn5U];
+	outtakePressed = vexRT[Btn5D];
+}
+
 
 
 /**
-* This function handles the arcade drive. It is based on an article by VRC Team 1666, Renegade Robotics
+* This function handles arcade drive. It is based on an article by VRC Team 1666, Renegade Robotics
 * that can be seen at https://renegaderobotics.org/robotc-chassis-programming/.
 *
+* The math for this comes from the Renegade Robotics Article. In the 2018 and 2019 seasons, Team 100
+* used this article from Renegade Robotics to develop a 'synthetic arcade drive' that does not rely
+* on the functions created by the people who write FRC robot libraries.
 */
-void arcade(){
+void arcade()
+{
 	dtLeftPower = (vexRT[Ch3] + vexRT[Ch4]);
 	dtRightPower = (vexRT[Ch3] - vexRT[Ch4]);
+
 }
 
-void tank(){
-	dtLeftPower = vexRT[Ch2];
-	dtRightPower = vexRT[Ch3];
+/**
+* This function handles tank drive. It takes the raw joystick values and assign it to the left and right power.
+*/
+void tank()
+{
+	dtLeftPower = vexRT[Ch2]; // This sets the left power to the value of the left joystick
+	dtRightPower = vexRT[Ch3]; // This sets the right power to the value of the right joystick
+
 }
 
 
-void setMotorPowers(){
+void processIntake()
+{
+	intakePower = intakeDefinedPower;
+}
+
+void processOuttake()
+{
+	intakePower = outtakeDefinedPower;
+}
+
+void zeroIntakeMotors(){
+	intakePower = 0;
+}
+
+void processIntakeOuttake()
+{
+	if(intakePressed){
+		processIntake();
+	}
+	else if(outtakePressed){
+		processOuttake();
+	}
+	else{
+		zeroIntakeMotors();
+	}
+
+}
+
+
+
+
+
+void processArmUp()
+{
+	armPower = armUpPower;
+}
+void processArmDown()
+{
+	armPower = armDownPower;
+}
+void zeroArmMotors()
+{
+	armPower = 0;
+}
+
+void processArm()
+{
+	if(armUpPressed){
+		processArmUp();
+	}
+	else if(armDownPressed){
+		processArmDown();
+	}
+	else{
+		zeroArmMotors();
+	}
+}
+
+
+void setMotorPowers()
+{
 	motor[LeftDrive] = dtLeftPower;
 	motor[RightDrive] = dtRightPower;
+	motor[Arm] = armPower;
+	motor[Intake] = intakePower;
+
 }
+
 
 /**
 * This runs the code for every loop.
@@ -57,15 +163,18 @@ void setMotorPowers(){
 *
 * @return whether the loop should run again
 */
-bool loop(){
-
-
+bool loop()
+{
+	getJoystickValues();
 	arcade();
 	//tank();
+	processIntakeOuttake();
+	processArm();
 	setMotorPowers();
 	return true;
 
 }
+
 /**
 * This code will be run by the Cortex on enable.
 * It runs the loop every time, waiting for a graceful shutdown
@@ -76,7 +185,5 @@ task main()
 	while(run){
 		run = loop();
 	}
-
-
 
 }
