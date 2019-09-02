@@ -20,7 +20,7 @@ task main()
 		signed char intakePower = vexRT[Btn5U] ? 60  : 0;
 		motor[Intake] = vexRT[Btn5D] ? -60 : intakePower;
 		signed char armPower = vexRT[Btn6U] ? 127 : 0;
-		motor[Arm]    = vexRT[Btn6D] ? -40 : armPower;
+		motor[Arm] = vexRT[Btn6D] ? -40 : armPower;
 
 		motor[LeftDrive] = (vexRT[Ch3] + vexRT[Ch4]);
 		motor[RightDrive] = (vexRT[Ch3] - vexRT[Ch4]);
