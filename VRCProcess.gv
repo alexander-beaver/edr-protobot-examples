@@ -1,0 +1,72 @@
+digraph vexRobot{
+    StartCode
+
+    StartCode->StartLoop[style=dashed color=aquamarine3]
+    subgraph cluster_0{
+        label="Robot Processing Loop";
+        StartLoop;
+    StartLoop->IntakeEntry[color=blue style=dashed];
+
+    subgraph cluster_1{
+        label="Intake";
+        IntakeEntry;
+        ActionIntake;
+        ActionOuttake;
+        ActionStopIntakeMotor;
+        IntakeExit;
+
+        IntakeEntry->ActionIntake[label="Btn 5U pressed" color=red];
+        IntakeEntry->ActionOuttake[label="Btn 5D pressed" color=purple];
+        IntakeEntry->ActionStopIntakeMotor[label="Neither Button Pressed" color=green];
+
+        ActionIntake->IntakeExit[color=red];
+        ActionOuttake->IntakeExit[color=purple];
+        ActionStopIntakeMotor->IntakeExit[color=green];
+    }
+    IntakeExit->ArmEntry[color=blue style=dashed]
+    subgraph cluster_2{
+        label="Arm";
+        ArmEntry;
+        ActionArmUp;
+        ActionArmDown;
+        ActionArmStop;
+        ArmExit;
+
+        ArmEntry->ActionArmUp[label="Btn6U pressed" color=red];
+        ArmEntry->ActionArmDown[label="Btn6D pressed" color=purple]
+        ArmEntry->ActionArmStop[label="Neither Button Pressed" color=green];
+        ActionArmUp->ArmExit[color=red];
+        ActionArmDown->ArmExit[color=purple];
+        ActionArmStop->ArmExit[color=green];
+    }
+    ArmExit->TankProcessLeftMotor[color=blue style=dashed]
+    ArmExit->ArcProcessLeftMotor[color=blue style=dashed]
+
+    
+    subgraph cluster_3{
+        label="Driving (tank)";
+        TankProcessLeftMotor;
+        TankProcessRightMotor;
+        TankProcessLeftMotor->TankProcessRightMotor;
+    }
+    subgraph cluster_4{
+        label="Driving (arcade)";
+        ArcProcessLeftMotor;
+        ArcProcessRightMotor;
+        ArcProcessLeftMotor->ArcProcessRightMotor;
+    }
+    
+    EndLoop;
+    TankProcessRightMotor->EndLoop[color=blue style=dashed];
+    ArcProcessRightMotor->EndLoop[color=blue style=dashed];
+    
+
+    }
+    EndLoop->EndCode[style=dashed color=aquamarine3]
+    
+    EndCode
+    
+
+
+
+}
